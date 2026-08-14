@@ -1,0 +1,548 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>OVERCLOCK - Real Madrid Edition</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700;900&family=Orbitron:wght@700;900&family=Rajdhani:wght@600;700&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --rm-blue-dark: #000a1e;
+            --rm-blue-main: #001c58;
+            --rm-blue-glow: #0052cc;
+            --rm-gold: #fea000;
+            --rm-gold-glow: #ffd700;
+            --rm-white: #ffffff;
+            --neon-cyan: #00f3ff;
+            --neon-danger: #ff0055;
+            --panel-bg: rgba(0, 15, 45, 0.92);
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Montserrat', sans-serif; }
+
+        body {
+            background-color: var(--rm-blue-dark);
+            color: var(--rm-white);
+            min-height: 100vh;
+            overflow-x: hidden;
+            background-image: 
+                radial-gradient(circle at 50% 20%, rgba(0, 82, 204, 0.3) 0%, transparent 70%),
+                radial-gradient(circle at 80% 80%, rgba(254, 160, 0, 0.15) 0%, transparent 50%);
+            background-attachment: fixed;
+        }
+
+        body::before {
+            content: "";
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background-image: 
+                linear-gradient(rgba(0, 243, 255, 0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(0, 243, 255, 0.03) 1px, transparent 1px);
+            background-size: 25px 25px;
+            z-index: -1;
+        }
+
+        /* BANNER Y LOGIN */
+        #splash-screen {
+            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+            background: radial-gradient(circle at center, var(--rm-blue-main) 0%, var(--rm-blue-dark) 90%);
+            z-index: 2000; display: flex; flex-direction: column; align-items: center; justify-content: center;
+            border: 3px solid var(--rm-gold);
+            box-shadow: inset 0 0 50px rgba(254, 160, 0, 0.4);
+        }
+
+        .rm-crest-badge {
+            width: 110px; height: 110px; border-radius: 50%;
+            background: radial-gradient(circle, #fff 30%, var(--rm-gold) 100%);
+            border: 4px solid var(--rm-gold);
+            display: flex; align-items: center; justify-content: center;
+            font-size: 3.5rem; color: var(--rm-blue-main);
+            box-shadow: 0 0 35px var(--rm-gold-glow);
+            animation: crownPulse 2.5s ease-in-out infinite alternate;
+            margin-bottom: 20px;
+        }
+
+        @keyframes crownPulse {
+            0% { transform: translateY(0) scale(1); box-shadow: 0 0 20px var(--rm-gold); }
+            100% { transform: translateY(-10px) scale(1.05); box-shadow: 0 0 45px var(--rm-gold-glow); }
+        }
+
+        .login-box {
+            background: var(--panel-bg); border: 2px solid var(--rm-gold);
+            box-shadow: 0 0 30px rgba(254, 160, 0, 0.3);
+            padding: 30px; border-radius: 20px; text-align: center; width: 90%; max-width: 380px;
+            backdrop-filter: blur(10px);
+        }
+
+        .login-box h1 {
+            font-family: 'Orbitron', sans-serif; color: var(--rm-white); font-size: 2.2rem;
+            letter-spacing: 4px; text-shadow: 0 0 15px var(--neon-cyan);
+        }
+
+        .login-box subtitle {
+            font-family: 'Rajdhani', sans-serif; color: var(--rm-gold); font-size: 0.9rem;
+            letter-spacing: 2px; display: block; margin-bottom: 20px;
+        }
+
+        .login-input {
+            width: 100%; padding: 12px; margin: 15px 0; background: #000;
+            border: 2px solid var(--rm-blue-glow); color: var(--rm-gold); border-radius: 10px;
+            font-size: 1.5rem; text-align: center; outline: none; letter-spacing: 8px;
+            box-shadow: inset 0 0 10px var(--rm-blue-glow);
+        }
+
+        .btn-neon {
+            font-family: 'Rajdhani', sans-serif; background: transparent; color: var(--rm-gold);
+            font-weight: bold; padding: 12px 25px; border: 2px solid var(--rm-gold); border-radius: 10px;
+            cursor: pointer; text-transform: uppercase; letter-spacing: 2px; transition: 0.3s; width: 100%;
+            font-size: 1.1rem; box-shadow: 0 0 15px rgba(254, 160, 0, 0.3);
+        }
+        .btn-neon:hover { background: var(--rm-gold); color: #000; box-shadow: 0 0 25px var(--rm-gold-glow); }
+
+        /* APLICACIÓN PRINCIPAL */
+        .header-banner {
+            width: 100%; background: rgba(0, 10, 30, 0.95);
+            border-bottom: 2px solid var(--rm-gold); box-shadow: 0 0 20px rgba(254, 160, 0, 0.3);
+            padding: 15px 20px; display: flex; align-items: center; justify-content: space-between;
+            position: sticky; top: 0; z-index: 100; backdrop-filter: blur(10px);
+        }
+
+        .title-main { font-family: 'Orbitron', sans-serif; font-size: 1.4rem; color: var(--rm-white); letter-spacing: 3px; }
+
+        #app-main { display: none; padding: 20px; max-width: 1000px; margin: 0 auto; }
+
+        /* PAROS & CARGAS */
+        .paros-container, .carga-card {
+            background: var(--panel-bg); border: 1.5px solid var(--rm-blue-glow); border-radius: 15px;
+            padding: 20px; margin-bottom: 20px; box-shadow: 0 0 20px rgba(0, 82, 204, 0.2);
+            backdrop-filter: blur(10px); position: relative;
+        }
+
+        .carga-card { border-color: var(--rm-gold); }
+
+        .input-group label {
+            font-family: 'Rajdhani', sans-serif; display: block; font-size: 0.85rem;
+            color: var(--neon-cyan); margin-bottom: 6px; text-transform: uppercase; font-weight: bold;
+        }
+
+        .input-group input, .input-group select {
+            width: 100%; padding: 10px; background: #000; border: 1px solid var(--rm-blue-glow);
+            color: #fff; border-radius: 8px; font-size: 1rem; outline: none; margin-bottom: 10px;
+        }
+
+        .input-group select option { background: #000; color: #fff; }
+
+        .ritmos-badge-grid {
+            display: grid; grid-template-columns: repeat(auto-fit, minmax(110px, 1fr)); gap: 8px;
+            background: rgba(0,0,0,0.6); padding: 10px; border-radius: 8px; border: 1px solid rgba(254, 160, 0, 0.3);
+        }
+        .ritmo-item { text-align: center; font-size: 0.75rem; color: #aaa; }
+        .ritmo-item span { display: block; font-weight: bold; color: var(--rm-gold); font-size: 0.9rem; margin-top: 2px; }
+
+        /* BANNER EFICIENCIA */
+        .banner-eficiencia {
+            background: rgba(0, 10, 30, 0.95); border: 2px solid var(--rm-gold);
+            border-radius: 18px; padding: 25px; margin: 25px 0; text-align: center;
+            box-shadow: 0 0 30px rgba(254, 160, 0, 0.3);
+        }
+
+        .eficiencia-valor { font-family: 'Orbitron', sans-serif; font-size: 4rem; color: var(--rm-white); text-shadow: 0 0 25px var(--rm-gold); }
+
+        .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 10px; margin-top: 20px; }
+        .stat-box { background: rgba(0,0,0,0.7); border: 1px solid rgba(255,255,255,0.1); padding: 12px; border-radius: 10px; }
+        .stat-box span { display: block; font-size: 1.2rem; font-weight: bold; color: var(--rm-gold); margin-top: 4px; }
+
+        /* TIMELINE */
+        .timeline-box { background: var(--panel-bg); border-radius: 14px; border: 1.5px solid var(--rm-blue-glow); overflow: hidden; }
+        .time-row { display: flex; justify-content: space-between; align-items: center; padding: 12px 18px; border-bottom: 1px solid rgba(255,255,255,0.05); font-size: 0.9rem; }
+        .time-row.carga { background: rgba(0, 28, 88, 0.6); border-left: 5px solid var(--rm-gold); }
+        .time-row.receso { background: rgba(40, 20, 0, 0.6); border-left: 5px solid var(--neon-danger); color: #ff99aa; }
+        
+        #loading-db { color: var(--rm-gold); font-size: 0.85rem; font-weight: bold; text-align: center; display: none; margin-bottom: 10px; }
+    </style>
+</head>
+<body>
+
+    <!-- PANTALLA DE LOGIN -->
+    <div id="splash-screen">
+        <div class="rm-crest-badge">👑</div>
+        <div class="login-box">
+            <h1>OVERCLOCK</h1>
+            <subtitle>REAL MADRID PRODUCTION SYSTEM</subtitle>
+            <input type="password" id="pin" class="login-input" placeholder="••••" maxlength="4" inputmode="numeric">
+            <button class="btn-neon" onclick="verificarAcceso()">ENTRAR AL BERNABÉU ⚽</button>
+            <p id="error-msg" style="color: var(--neon-danger); margin-top: 12px; font-size: 0.85rem; display: none;"></p>
+        </div>
+    </div>
+
+    <!-- PWA MAIN -->
+    <div id="app-wrapper">
+        <div class="header-banner">
+            <div>
+                <div class="title-main">⚡ OVERCLOCK</div>
+                <div style="font-size: 0.75rem; color: var(--rm-gold);" id="nombre-usuario">REYES DE EUROPA</div>
+            </div>
+            <div style="text-align: right; font-size: 0.8rem; color: #aaa;">
+                <div>TURNO 11 HORAS</div>
+                <div style="color: var(--neon-cyan); font-weight: bold;">07:00 AM - 07:00 PM</div>
+            </div>
+        </div>
+
+        <div id="app-main">
+            <div id="loading-db">⚽ Sincronizando Estrategia y Metas desde la BD...</div>
+
+            <!-- TIEMPOS MUERTOS -->
+            <div class="paros-container">
+                <h4 style="color: var(--rm-gold); margin-bottom: 10px;">⏱️ TIEMPOS MUERTOS / PAROS (TIME OFF)</h4>
+                <div style="display: flex; gap: 15px; flex-wrap: wrap;">
+                    <div class="input-group" style="flex: 1; min-width: 120px;">
+                        <label>Horas de Paro</label>
+                        <input type="number" id="paro-horas-input" value="0" min="0" oninput="calcularTodo();">
+                    </div>
+                    <div class="input-group" style="flex: 1; min-width: 120px;">
+                        <label>Minutos de Paro</label>
+                        <input type="number" id="paro-minutos-input" value="0" min="0" max="59" oninput="calcularTodo();">
+                    </div>
+                </div>
+                <div style="font-size: 0.85rem; color: var(--neon-cyan);">
+                    Total Paro: <b id="paro-decimal-display" style="color: var(--rm-gold);">0.00 hrs</b>
+                </div>
+            </div>
+
+            <!-- CONTENEDOR DE CARGAS -->
+            <div id="contenedor-cargas"></div>
+
+            <button class="btn-neon" onclick="agregarCarga()" style="margin-bottom: 25px;">+ AÑADIR NUEVA CARGA</button>
+
+            <!-- DASHBOARD Y RESULTADOS -->
+            <div class="banner-eficiencia">
+                <div style="font-size: 0.9rem; color: var(--rm-gold); letter-spacing: 2px;">EFICIENCIA DE LEYENDA</div>
+                <div class="eficiencia-valor" id="efi-final">0.00%</div>
+                
+                <div class="stats-grid">
+                    <div class="stat-box">META ON (PROMEDIO)<span><b id="suma-metas-val">0.0</b> <small>dz</small></span></div>
+                    <div class="stat-box">META FINAL AJUSTADA<span><b id="meta-dia-val">0.0</b> <small>dz</small></span></div>
+                    <div class="stat-box">TOTAL HECHAS<span><b id="docenas-hechas-val">0.00</b> <small>dz</small></span></div>
+                    <div class="stat-box">DOCENAS PERDIDAS<span><b id="docenas-perdidas-val" style="color: var(--neon-danger);">0.00</b> <small>dz</small></span></div>
+                </div>
+            </div>
+
+            <!-- BITÁCORA DETALLADA -->
+            <div class="timeline-box" id="timeline-container"></div>
+        </div>
+    </div>
+
+    <script>
+        const SHEET_ID = '1SBsIDmwEZTarfIvZsuOl1nTC0AbkIDZa';
+        let bddMetas = [];
+        let cargas = [];
+
+        const RECESOS = [
+            { id: 'r1', nombre: 'RECESO 8:10 AM - 8:25 AM', inicioMin: 70, finMin: 85, duracion: 15 },
+            { id: 'r2', nombre: 'ALMUERZO 11:20 AM - 11:50 AM', inicioMin: 260, finMin: 290, duracion: 30 },
+            { id: 'r3', nombre: 'RECESO 3:10 PM - 3:25 PM', inicioMin: 490, finMin: 505, duracion: 15 }
+        ];
+
+        function verificarAcceso() {
+            const pinIngresado = document.getElementById('pin').value.trim();
+            fetch('/api/login', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ pin: pinIngresado })
+            })
+            .then(res => res.json())
+            .then(data => {
+                if(data.success) {
+                    document.getElementById('splash-screen').style.display = 'none';
+                    document.getElementById('app-main').style.display = 'block';
+                    document.getElementById('nombre-usuario').innerText = `JUGADOR: ${data.nombre}`;
+                    conectarBD();
+                } else {
+                    const err = document.getElementById('error-msg');
+                    err.innerText = data.message || "PIN Incorrecto";
+                    err.style.display = 'block';
+                }
+            })
+            .catch(() => { alert("Error al verificar PIN."); });
+        }
+
+        function conectarBD() {
+            document.getElementById('loading-db').style.display = 'block';
+            const url = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json&sheet=Produccion`;
+
+            fetch(url)
+                .then(res => res.text())
+                .then(data => {
+                    const jsonText = data.substring(47, data.length - 2);
+                    const json = JSON.parse(jsonText);
+                    const filas = json.table.rows;
+
+                    bddMetas = filas.map(f => ({
+                        estilo: f.c[0] ? f.c[0].v.toString().trim() : '',
+                        talla: f.c[1] ? f.c[1].v.toString().trim() : '',
+                        operacion: f.c[3] ? f.c[3].v.toString().trim() : '',
+                        metaDocenas: f.c[5] ? parseFloat(f.c[5].v) : 0
+                    })).filter(item => item.estilo !== "ESTILO");
+
+                    document.getElementById('loading-db').style.display = 'none';
+                    agregarCarga(); // Primera carga inicial
+                })
+                .catch(err => {
+                    alert("Error consultando la base de datos.");
+                    console.error(err);
+                });
+        }
+
+        function agregarCarga() {
+            cargas.push({ id: cargas.length + 1, estilo: '', talla: '', operacion: '', meta: 0, hechas: 0 });
+            renderizarCargas();
+        }
+
+        function eliminarCarga(index) {
+            if (cargas.length > 1) {
+                cargas.splice(index, 1);
+                renderizarCargas();
+            }
+        }
+
+        function renderizarCargas() {
+            const container = document.getElementById('contenedor-cargas');
+            container.innerHTML = '';
+
+            cargas.forEach((c, index) => {
+                const estilosUnicos = [...new Set(bddMetas.map(i => i.estilo).filter(Boolean))].sort();
+
+                container.innerHTML += `
+                    <div class="carga-card" id="carga-card-${index}">
+                        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 10px;">
+                            <label style="color: var(--rm-gold); font-weight: 900;">👑 CARGA #${index + 1}</label>
+                            ${cargas.length > 1 ? `<button onclick="eliminarCarga(${index})" style="background:transparent; border:none; color:var(--neon-danger); cursor:pointer; font-weight:bold;">✕ Quitar</button>` : ''}
+                        </div>
+
+                        <div class="input-group">
+                            <label>👕 Estilo</label>
+                            <select id="estilo-${index}" onchange="onChangeEstilo(${index})">
+                                <option value="">Seleccione Estilo...</option>
+                                ${estilosUnicos.map(e => `<option value="${e}" ${c.estilo === e ? 'selected' : ''}>${e}</option>`).join('')}
+                            </select>
+                        </div>
+
+                        <div class="input-group">
+                            <label>📐 Talla</label>
+                            <select id="talla-${index}" onchange="onChangeTalla(${index})" ${!c.estilo ? 'disabled' : ''}>
+                                <option value="">Seleccione Talla...</option>
+                            </select>
+                        </div>
+
+                        <div class="input-group">
+                            <label>⚙️ Proceso / Operación</label>
+                            <select id="operacion-${index}" onchange="onChangeOperacion(${index})" ${!c.talla ? 'disabled' : ''}>
+                                <option value="">Seleccione Proceso...</option>
+                            </select>
+                        </div>
+
+                        <div class="input-group">
+                            <label>📦 Docenas Traídas / Hechas</label>
+                            <input type="number" value="${c.hechas}" oninput="actualizarHechas(${index}, this.value)" style="color: var(--rm-gold); font-weight: bold;">
+                        </div>
+
+                        <div class="ritmos-badge-grid" id="badges-${index}">
+                            <div class="ritmo-item">Meta Auto<span class="meta-val">${c.meta} dz</span></div>
+                            <div class="ritmo-item">Ritmo 100%<span class="r100-val">0 dz/h</span></div>
+                            <div class="ritmo-item">Tiempo 100%<span class="t100-val">0h 00m</span></div>
+                            <div class="ritmo-item">Tiempo 75%<span class="t75-val">0h 00m</span></div>
+                        </div>
+                    </div>
+                `;
+            });
+
+            cargas.forEach((c, index) => {
+                if(c.estilo) poblarTallas(index, c.estilo, c.talla);
+                if(c.talla) poblarOperaciones(index, c.estilo, c.talla, c.operacion);
+                actualizarBadgesCarga(index);
+            });
+
+            calcularTodo();
+        }
+
+        function onChangeEstilo(index) {
+            const e = document.getElementById(`estilo-${index}`).value;
+            cargas[index].estilo = e;
+            cargas[index].talla = '';
+            cargas[index].operacion = '';
+            cargas[index].meta = 0;
+            poblarTallas(index, e, '');
+            actualizarBadgesCarga(index);
+            calcularTodo();
+        }
+
+        function onChangeTalla(index) {
+            const e = cargas[index].estilo;
+            const t = document.getElementById(`talla-${index}`).value;
+            cargas[index].talla = t;
+            cargas[index].operacion = '';
+            cargas[index].meta = 0;
+            poblarOperaciones(index, e, t, '');
+            actualizarBadgesCarga(index);
+            calcularTodo();
+        }
+
+        function onChangeOperacion(index) {
+            const e = cargas[index].estilo;
+            const t = cargas[index].talla;
+            const o = document.getElementById(`operacion-${index}`).value;
+            cargas[index].operacion = o;
+
+            const reg = bddMetas.find(item => item.estilo === e && item.talla === t && item.operacion === o);
+            cargas[index].meta = reg ? reg.metaDocenas : 0;
+            actualizarBadgesCarga(index);
+            calcularTodo();
+        }
+
+        function poblarTallas(index, estilo, tallaSel) {
+            const combo = document.getElementById(`talla-${index}`);
+            if (!combo) return;
+            combo.innerHTML = '<option value="">Seleccione Talla...</option>';
+            if(estilo) {
+                combo.disabled = false;
+                const tallas = [...new Set(bddMetas.filter(i => i.estilo === estilo).map(i => i.talla).filter(Boolean))].sort();
+                tallas.forEach(t => {
+                    combo.innerHTML += `<option value="${t}" ${t === tallaSel ? 'selected' : ''}>${t}</option>`;
+                });
+            } else { combo.disabled = true; }
+        }
+
+        function poblarOperaciones(index, estilo, talla, opSel) {
+            const combo = document.getElementById(`operacion-${index}`);
+            if (!combo) return;
+            combo.innerHTML = '<option value="">Seleccione Proceso...</option>';
+            if(talla) {
+                combo.disabled = false;
+                const ops = [...new Set(bddMetas.filter(i => i.estilo === estilo && i.talla === talla).map(i => i.operacion).filter(Boolean))].sort();
+                ops.forEach(o => {
+                    combo.innerHTML += `<option value="${o}" ${o === opSel ? 'selected' : ''}>${o}</option>`;
+                });
+            } else { combo.disabled = true; }
+        }
+
+        function actualizarHechas(index, val) {
+            cargas[index].hechas = parseFloat(val) || 0;
+            actualizarBadgesCarga(index);
+            calcularTodo();
+        }
+
+        function actualizarBadgesCarga(index) {
+            const card = document.getElementById(`carga-card-${index}`);
+            if (!card) return;
+
+            let c = cargas[index];
+            let ritmo100 = c.meta / 11;
+            let ritmo75 = ritmo100 * 0.75;
+            let baseDocenas = c.hechas > 0 ? c.hechas : c.meta;
+            let horas100 = ritmo100 > 0 ? baseDocenas / ritmo100 : 0;
+            let horas75 = ritmo75 > 0 ? baseDocenas / ritmo75 : 0;
+
+            card.querySelector('.meta-val').innerText = `${c.meta} dz`;
+            card.querySelector('.r100-val').innerText = `${ritmo100.toFixed(2)} dz/h`;
+            card.querySelector('.t100-val').innerText = formatearHorasMinutos(horas100);
+            card.querySelector('.t75-val').innerText = formatearHorasMinutos(horas75);
+        }
+
+        function formatearHorasMinutos(horasDecimales) {
+            if (isNaN(horasDecimales) || horasDecimales <= 0) return "0h 00m";
+            let totalMins = Math.round(horasDecimales * 60);
+            return `${Math.floor(totalMins / 60)}h ${(totalMins % 60).toString().padStart(2, '0')}m`;
+        }
+
+        function formatoHora(minutosDesde7AM) {
+            let totalMins = 7 * 60 + minutosDesde7AM;
+            let h = Math.floor(totalMins / 60);
+            let m = Math.round(totalMins % 60);
+            if (m >= 60) { h += 1; m = 0; }
+            let ampm = h >= 12 ? 'PM' : 'AM';
+            let displayH = h > 12 ? h - 12 : h;
+            if (displayH === 0) displayH = 12;
+            return `${displayH.toString().padStart(2, '0')}:${m.toString().padStart(2, '0')} ${ampm}`;
+        }
+
+        function calcularTodo() {
+            let sumaMetas = 0, totalDocenasHechas = 0;
+            cargas.forEach(c => {
+                sumaMetas += c.meta;
+                totalDocenasHechas += c.hechas;
+            });
+
+            let metaOn = cargas.length > 0 ? (sumaMetas / cargas.length) : 0;
+            let hrsParo = parseFloat(document.getElementById('paro-horas-input').value) || 0;
+            let minsParo = parseFloat(document.getElementById('paro-minutos-input').value) || 0;
+            let tiempoParoDecimal = hrsParo + (minsParo / 60);
+
+            document.getElementById('paro-decimal-display').innerText = `${tiempoParoDecimal.toFixed(2)} hrs (${hrsParo}h ${minsParo}m)`;
+
+            let docenasPerdidas = metaOn > 0 ? (metaOn / 11) * tiempoParoDecimal : 0;
+            let metaFinal = Math.max(0, metaOn - docenasPerdidas);
+            let eficienciaFinal = metaFinal > 0 ? (totalDocenasHechas / metaFinal) * 100 : 0;
+
+            document.getElementById('efi-final').innerText = eficienciaFinal.toFixed(2) + '%';
+            document.getElementById('suma-metas-val').innerText = metaOn.toFixed(1);
+            document.getElementById('meta-dia-val').innerText = metaFinal.toFixed(1);
+            document.getElementById('docenas-hechas-val').innerText = totalDocenasHechas.toFixed(2);
+            document.getElementById('docenas-perdidas-val').innerText = docenasPerdidas.toFixed(2);
+
+            generarBitacora();
+        }
+
+        function generarBitacora() {
+            const container = document.getElementById('timeline-container');
+            container.innerHTML = '';
+            if (cargas.length === 0) return;
+
+            let totalTrabajo = 0;
+            cargas.forEach(c => { totalTrabajo += (c.hechas > 0 ? c.hechas : c.meta); });
+
+            const MINUTOS_PRODUCCION = 660; 
+            let relojActual = 0;
+
+            cargas.forEach((c, idx) => {
+                let docenasAProcesar = c.hechas > 0 ? c.hechas : c.meta;
+                let proporcion = totalTrabajo > 0 ? (docenasAProcesar / totalTrabajo) : (1 / cargas.length);
+                let tiempoAsignadoMinutos = proporcion * MINUTOS_PRODUCCION;
+                let ritmoEfectivo = tiempoAsignadoMinutos > 0 ? (docenasAProcesar / (tiempoAsignadoMinutos / 60)) : 0;
+
+                let tiempoRestanteMins = tiempoAsignadoMinutos;
+                let inicioCargaMins = relojActual;
+
+                while (tiempoRestanteMins > 0.01) {
+                    let recesoActual = RECESOS.find(r => relojActual >= r.inicioMin && relojActual < r.finMin);
+
+                    if (recesoActual) {
+                        let minsEnReceso = recesoActual.finMin - relojActual;
+                        relojActual += minsEnReceso;
+                        container.innerHTML += `
+                            <div class="time-row receso">
+                                <div>↳ ${recesoActual.nombre}</div>
+                                <div>${formatoHora(recesoActual.inicioMin)} - ${formatoHora(recesoActual.finMin)}</div>
+                            </div>
+                        `;
+                    } else {
+                        let proxReceso = RECESOS.find(r => r.inicioMin > relojActual);
+                        let minsHastaProx = proxReceso ? (proxReceso.inicioMin - relojActual) : Infinity;
+                        let paso = Math.min(tiempoRestanteMins, minsHastaProx);
+                        relojActual += paso;
+                        tiempoRestanteMins -= paso;
+                    }
+                }
+
+                container.innerHTML += `
+                    <div class="time-row carga">
+                        <div>CARGA #${idx + 1} (${c.estilo || 'S/E'}) - ${docenasAProcesar} dz (@ ${ritmoEfectivo.toFixed(1)} dz/h)</div>
+                        <div>${formatoHora(inicioCargaMins)} - ${formatoHora(relojActual)}</div>
+                    </div>
+                `;
+            });
+        }
+    </script>
+</body>
+</html>
