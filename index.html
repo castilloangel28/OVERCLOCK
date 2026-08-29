@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>OVERCLOCK - Real Madrid Edition</title>
-    
+
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700;900&family=Orbitron:wght@700;900&family=Rajdhani:wght@600;700&display=swap" rel="stylesheet">
 
     <style>
@@ -159,7 +159,7 @@
         .time-row { display: flex; justify-content: space-between; align-items: center; padding: 12px 18px; border-bottom: 1px solid rgba(255,255,255,0.05); font-size: 0.9rem; }
         .time-row.carga { background: rgba(0, 28, 88, 0.6); border-left: 5px solid var(--rm-gold); }
         .time-row.receso { background: rgba(40, 20, 0, 0.6); border-left: 5px solid var(--neon-danger); color: #ff99aa; }
-        
+
         #loading-db { color: var(--rm-gold); font-size: 0.85rem; font-weight: bold; text-align: center; display: none; margin-bottom: 10px; }
     </style>
 </head>
@@ -220,7 +220,7 @@
             <div class="banner-eficiencia">
                 <div style="font-size: 0.9rem; color: var(--rm-gold); letter-spacing: 2px;">EFICIENCIA DE LEYENDA</div>
                 <div class="eficiencia-valor" id="efi-final">0.00%</div>
-                
+
                 <div class="stats-grid">
                     <div class="stat-box">META ON (PROMEDIO)<span><b id="suma-metas-val">0.0</b> <small>dz</small></span></div>
                     <div class="stat-box">META FINAL AJUSTADA<span><b id="meta-dia-val">0.0</b> <small>dz</small></span></div>
@@ -279,12 +279,20 @@
                     const json = JSON.parse(jsonText);
                     const filas = json.table.rows;
 
-                    bddMetas = filas.map(f => ({
-                        estilo: f.c[0] ? f.c[0].v.toString().trim() : '',
-                        talla: f.c[1] ? f.c[1].v.toString().trim() : '',
-                        operacion: f.c[3] ? f.c[3].v.toString().trim() : '',
-                        metaDocenas: f.c[5] ? parseFloat(f.c[5].v) : 0
-                    })).filter(item => item.estilo !== "ESTILO");
+                    bddMetas = filas.map(f => {
+                        // Extrae el valor numérico (v) o el formateado con letras (f)
+                        const obtenerTexto = (celda) => {
+                            if (!celda) return '';
+                            return String(celda.f !== undefined && celda.f !== null ? celda.f : (celda.v !== undefined && celda.v !== null ? celda.v : '')).trim();
+                        };
+
+                        return {
+                            estilo: obtenerTexto(f.c[0]),
+                            talla: obtenerTexto(f.c[1]),
+                            operacion: obtenerTexto(f.c[3]),
+                            metaDocenas: f.c[5] && f.c[5].v !== null ? parseFloat(f.c[5].v) : 0
+                        };
+                    }).filter(item => item.estilo !== "" && item.estilo.toUpperCase() !== "ESTILO");
 
                     document.getElementById('loading-db').style.display = 'none';
                     agregarCarga(); // Primera carga inicial
@@ -312,7 +320,10 @@
             container.innerHTML = '';
 
             cargas.forEach((c, index) => {
-                const estilosUnicos = [...new Set(bddMetas.map(i => i.estilo).filter(Boolean))].sort();
+                // Ordenación alfanumérica natural
+                const estilosUnicos = [...new Set(bddMetas.map(i => i.estilo).filter(Boolean))].sort((a, b) => 
+                    a.localeCompare(b, undefined, { numeric: true, sensitivity: 'base' })
+                );
 
                 container.innerHTML += `
                     <div class="carga-card" id="carga-card-${index}">
@@ -407,7 +418,9 @@
             combo.innerHTML = '<option value="">Seleccione Talla...</option>';
             if(estilo) {
                 combo.disabled = false;
-                const tallas = [...new Set(bddMetas.filter(i => i.estilo === estilo).map(i => i.talla).filter(Boolean))].sort();
+                const tallas = [...new Set(bddMetas.filter(i => i.estilo === estilo).map(i => i.talla).filter(Boolean))].sort((a, b) => 
+                    a.localeCompare(b, undefined, { numeric: true, sensitivity: 'base' })
+                );
                 tallas.forEach(t => {
                     combo.innerHTML += `<option value="${t}" ${t === tallaSel ? 'selected' : ''}>${t}</option>`;
                 });
@@ -420,7 +433,9 @@
             combo.innerHTML = '<option value="">Seleccione Proceso...</option>';
             if(talla) {
                 combo.disabled = false;
-                const ops = [...new Set(bddMetas.filter(i => i.estilo === estilo && i.talla === talla).map(i => i.operacion).filter(Boolean))].sort();
+                const ops = [...new Set(bddMetas.filter(i => i.estilo === estilo && i.talla === talla).map(i => i.operacion).filter(Boolean))].sort((a, b) => 
+                    a.localeCompare(b, undefined, { numeric: true, sensitivity: 'base' })
+                );
                 ops.forEach(o => {
                     combo.innerHTML += `<option value="${o}" ${o === opSel ? 'selected' : ''}>${o}</option>`;
                 });
