@@ -35,7 +35,7 @@ USUARIOS_AUTORIZADOS = {
     "5601": {"nombre": "Ever Murillo 🛸"},
     "8293": {"nombre": "Elder Cantarero ⛩️"},
     "4172": {"nombre": "Carlos Palma 🧢"},
-    "9876": {"nombre": "Usuario02 🐼"},
+    "9876": {"nombre": "Gian Mazariegos 🐼"},
     "5020": {"nombre": "Usuario03 🦚"},
     "6014": {"nombre": "Usuario04 🦊"},
     "9018": {"nombre": "Usuario05 🧩"},
